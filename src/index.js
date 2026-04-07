@@ -13,7 +13,7 @@ const app = express();
 
 app.use(cors({
   origin: "https://frontend-wppapp-production.up.railway.app",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
