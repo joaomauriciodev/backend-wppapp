@@ -190,7 +190,7 @@ router.get('/:id/logs', async (req, res) => {
   }
 });
 
-// ─── Test rule — simulate a reply without sending via WhatsApp ───────────────
+// ─── Test rule — generate reply and send it via WhatsApp ─────────────────────
 router.post('/:id/test', async (req, res) => {
   const { message } = req.body;
   if (!message || !message.trim()) {
@@ -206,18 +206,23 @@ router.post('/:id/test', async (req, res) => {
 
     const rule = result.rows[0];
     const { generateReply } = require('../config/gemini');
+    const { sendTestMessage } = require('../config/whatsapp');
 
+    // Generate reply via Gemini
     const reply = await generateReply(
       message,
       rule.tone,
       rule.extra_prompt,
       rule.contact_name,
-      [], // no history for test
+      [],
       pool,
       req.userId
     );
 
-    res.json({ reply });
+    // Send the generated reply directly to the contact via WhatsApp
+    await sendTestMessage(req.userId, rule.contact_phone, reply);
+
+    res.json({ reply, sent: true });
   } catch (err) {
     console.error('Test rule error:', err);
     res.status(500).json({ error: err.message || 'Erro ao testar regra' });
