@@ -50,13 +50,19 @@ const initWhatsAppClient = async (userId) => {
 
   clientStatus.set(userId, 'initializing');
 
-  const client = new Client({
-    authStrategy: new LocalAuth({ clientId: `user_${userId}` }),
-    puppeteer: {
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-    },
-  });
+const client = new Client({
+  authStrategy: new LocalAuth({ clientId: `user_${userId}` }),
+  puppeteer: {
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu'
+    ],
+  },
+});
 
   clients.set(userId, client);
 
